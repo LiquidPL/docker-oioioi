@@ -2,20 +2,20 @@ FROM debian:stretch
 ENV PYTHONUNBUFFERED 1
 
 RUN useradd -m oioioi
-COPY oioioi /home/oioioi/oioioi
+COPY oioioi /sio2/oioioi
 
 COPY sudo.sh /tmp
 RUN /tmp/sudo.sh
 
 USER oioioi
-WORKDIR /home/oioioi
+WORKDIR /sio2
 
 COPY build.sh /tmp
 RUN /tmp/build.sh
 
-COPY settings.py /home/oioioi/deployment/settings.py
+COPY settings.py /sio2/deployment/settings.py
 
-COPY wait-for-it.sh /home/oioioi
-COPY run.sh /home/oioioi
+COPY wait-for-it.sh /sio2
+COPY run.sh /sio2
 
 CMD ["bash", "run.sh"]

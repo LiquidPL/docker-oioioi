@@ -124,7 +124,7 @@ FILETRACKER_LISTEN_PORT = int(os.environ.get('FILETRACKER_LISTEN_PORT', 9999))
 
 # When using a remote_storage_factory it's necessary to specify a cache
 # directory in which a necessary files will be stored.
-#FILETRACKER_CACHE_ROOT = '/home/oioioi/deployment/cache'
+#FILETRACKER_CACHE_ROOT = '/sio2/deployment/cache'
 
 # When using a remote storage it's recommended to enable a cache cleaner deamon
 # which will periodically scan cache directory and remove files what aren't
@@ -148,7 +148,7 @@ FILETRACKER_URL = os.environ.get('FILETRACKER_URL', 'http://127.0.0.1:9999')
 LOGGING['handlers']['zeus_file'] = {
     'level': 'INFO',
     'class': 'logging.handlers.RotatingFileHandler',
-    'filename': '/home/oioioi/deployment/logs/zeus.log',
+    'filename': '/sio2/deployment/logs/zeus.log',
     'maxBytes': 1024 * 1024 * 5, # 50 MB same as default in supervisord
     'backupCount': 10, # same as in supervisord
     'formatter': 'date_and_level',

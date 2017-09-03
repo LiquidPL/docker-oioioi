@@ -4,7 +4,7 @@ BUILD_PACKAGES="build-essential python2.7 python-dev virtualenv"
 
 RUNTIME_PACKAGES="python2.7 libpython2.7 virtualenv texlive-latex-base texlive-lang-polish texlive-latex-extra texlive-fonts-recommended lighttpd libstdc++6:i386 zlib1g:i386"
 
-sudo chown -R oioioi:oioioi /home/oioioi/oioioi
+sudo chown -R oioioi:oioioi /sio2
 
 sudo dpkg --add-architecture i386
 
