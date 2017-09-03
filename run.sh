@@ -7,4 +7,5 @@
 cd deployment
 
 python manage.py migrate
+python manage.py collectstatic --noinput
 exec python manage.py supervisor
