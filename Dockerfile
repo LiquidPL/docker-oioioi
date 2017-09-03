@@ -12,3 +12,10 @@ WORKDIR /home/oioioi
 
 COPY build.sh /tmp
 RUN /tmp/build.sh
+
+COPY settings.py /home/oioioi/deployment/settings.py
+
+COPY wait-for-it.sh /home/oioioi
+COPY run.sh /home/oioioi
+
+CMD ["bash", "run.sh"]
