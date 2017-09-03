@@ -30,7 +30,7 @@ sed -i 's/{{ PROJECT_DIR }}\/uwsgi.sock/127.0.0.1:3031/g' supervisord.conf
 
 deactivate
 
-sudo apt-get --purge -y remove $BUILD_PACKAGES
+sudo apt-get --purge -y remove $BUILD_PACKAGES sudo
 sudo apt-get --purge -y autoremove
 
 sudo apt-get --no-install-recommends -y install $RUNTIME_PACKAGES
