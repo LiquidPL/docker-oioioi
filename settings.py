@@ -69,13 +69,13 @@ LANGUAGE_CODE = os.environ.get('LANGUAGE_CODE', 'en')
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join('BASE_DIR', 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = os.path.join('BASE_DIR', 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = os.environ.get('SECRET_KEY', 'verysecretkey')
@@ -295,11 +295,12 @@ INSTALLED_APPS = (
 #    'oioioi.testspackages',
 #    'oioioi.pa',
 #    'oioioi.notifications',
-#    'oioioi.prizes',
+    'oioioi.prizes',
 #    'oioioi.mailsubmit',
 #    'oioioi.portals',
 #    'oioioi.globalmessage',
 #    'oioioi.newsfeed',
+    'oioioi.workers',
 ) + INSTALLED_APPS
 
 # Set to True to show the link to the problemset with contests on navbar.
