@@ -26,9 +26,7 @@ SITE_ID = 1
 PUBLIC_ROOT_URL = os.environ.get('PUBLIC_ROOT_URL', 'https://example.com')
 
 # Email addresses to send error message reports.
-ADMINS = (
-    ('Your Name', 'youremail@example.com'),
-)
+ADMINS = [tuple(x.split('|')) for x in os.environ.get('ADMINS', 'youremail@example.com').split(';')]
 
 # Sender email address for messages sent by OIOIOI to users.
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@example.com')
@@ -44,7 +42,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': 'django.db.backends.' + os.environ.get('DATABASE_BACKEND', 'postgresql_psycopg2'), # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': os.environ.get('DATABASE_NAME', 'oioioi'),                      # Or path to database file if using sqlite3.
         'USER': os.environ.get('DATABASE_USERNAME', 'oioioi'),                      # Not used with sqlite3.
         'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'password'),                  # Not used with sqlite3.
@@ -84,16 +82,16 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'verysecretkey')
 #OISUBMIT_MAGICKEY = '__OTHER_SECRET__'
 
 # SMTP server parameters for sending emails.
-EMAIL_SUBJECT_PREFIX = os.environ.get('EMAIL_SUBJECT_PREFIX', '[{}] '.format(SITE_NAME))
-EMAIL_USE_TLS = False
-EMAIL_HOST = 'mail'
-EMAIL_PORT = 25
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_SUBJECT_PREFIX = os.environ.get('EMAIL_SUBJECT_PREFIX', '[{}]'.format(SITE_NAME)) + ' '
+EMAIL_USE_TLS = bool(strtobool(os.environ.get('EMAIL_USE_TLS', 'False')))
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'mail')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 25))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 # Comment to send user activation emails. Needs an SMTP server to be
 # configured above.
-SEND_USER_ACTIVATION_EMAIL = False
+SEND_USER_ACTIVATION_EMAIL = bool(strtobool(os.environ.get('SEND_USER_ACTIVATION_EMAIL', 'False')))
 
 # RabbitMQ server URL for distributed workers.
 #
@@ -119,7 +117,7 @@ BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@localhost:5672//')
 # the judging machines on a separate physical network and listen only on the
 # corresponding IP address.
 FILETRACKER_SERVER_ENABLED = bool(strtobool(os.environ.get('FILETRACKER_SERVER_ENABLED', 'False')))
-FILETRACKER_LISTEN_ADDR = os.environ.get('FILETRACKER_LISTEN_ADDR', '0.0.0.0')
+FILETRACKER_LISTEN_ADDR = os.environ.get('FILETRACKER_LISTEN_ADDR', '127.0.0.1')
 FILETRACKER_LISTEN_PORT = int(os.environ.get('FILETRACKER_LISTEN_PORT', 9999))
 
 # When using a remote_storage_factory it's necessary to specify a cache
@@ -161,7 +159,7 @@ LOGGING['loggers']['oioioi.zeus'] = {
 # On which interface should the sioworkers receiver listen. You should
 # set the address to 0.0.0.0 if you want remote workers to access
 # your server.
-#SIOWORKERS_LISTEN_ADDR = '127.0.0.1'
+SIOWORKERS_LISTEN_ADDR = os.environ.get('SIOWORKERS_LISTEN_ADDR', '127.0.0.1')
 #SIOWORKERS_LISTEN_PORT = 7890
 
 # URL to which should respond sioworkersd, when it has finished its job
@@ -171,7 +169,7 @@ LOGGING['loggers']['oioioi.zeus'] = {
 
 # Set this to false if you don't need sioworkersd instance (e. g.
 # because you use instance started by another instance of OIOIOI)
-#RUN_SIOWORKERSD = True
+RUN_SIOWORKERSD = bool(strtobool(os.environ.get('RUN_SIOWORKERSD', 'True')))
 
 # Contest mode - automatic activation of contests.
 #
@@ -199,8 +197,8 @@ LOGGING['loggers']['oioioi.zeus'] = {
 # The default setting is "contest_if_possible".
 # To access the contest mode setting you also have to uncomment
 # the following import line.
-#from oioioi.contests.current_contest import ContestMode
-#CONTEST_MODE =
+from oioioi.contests.current_contest import ContestMode
+CONTEST_MODE = ContestMode[os.environ.get('CONTEST_MODE', 'contest_if_possible')]
 
 # Similarly comment this out to disable workers running on the server machine.
 RUN_LOCAL_WORKERS = bool(strtobool(os.environ.get('RUN_LOCAL_WORKERS', 'True')))
@@ -240,15 +238,15 @@ USE_SINOLPACK_MAKEFILES = False
 #     'oioioi.programs.utils.sum_score_aggregator'
 
 #Upper bounds for tests' time [ms] and memory [KiB] limits.
-MAX_TEST_TIME_LIMIT_PER_PROBLEM = 1000 * 60 * 60 * 30
-MAX_MEMORY_LIMIT_FOR_TEST = 256 * 1024
+MAX_TEST_TIME_LIMIT_PER_PROBLEM = int(os.environ.get('MAX_TEST_TIME_LIMIT_PER_PROBLEM', 1000 * 60 * 60 * 30))
+MAX_MEMORY_LIMIT_FOR_TEST = int(os.environ.get('MAX_MEMORY_LIMIT_FOR_TEST', 256 * 1024))
 
 # Controls if uwsgi in default configuration shall use gevent loop.
 # To use it, you have to install gevent - please consult
 # https://github.com/surfly/gevent
 # This is recommended for heavy load, but you may still need to tune uwsgi
 # options in deployment/supervisord.conf
-UWSGI_USE_GEVENT = False
+UWSGI_USE_GEVENT = bool(strtobool(os.environ.get('UWSGI_USE_GEVENT', 'False')))
 
 # EXTRA MODULES
 #
@@ -304,13 +302,13 @@ INSTALLED_APPS = (
 ) + INSTALLED_APPS
 
 # Set to True to show the link to the problemset with contests on navbar.
-PROBLEMSET_LINK_VISIBLE = True
+PROBLEMSET_LINK_VISIBLE = bool(strtobool(os.environ.get('PROBLEMSET_LINK_VISIBLE', 'True')))
 
 # Comment out to show tags on the list of problems
-#PROBLEM_TAGS_VISIBLE = True
+PROBLEM_TAGS_VISIBLE = bool(strtobool(os.environ.get('PROBLEM_TAGS_VISIBLE', 'False')))
 
 # Set to True to allow every logged in user to add problems directly to Problemset
-EVERYBODY_CAN_ADD_TO_PROBLEMSET = False
+EVERYBODY_CAN_ADD_TO_PROBLEMSET = bool(strtobool(os.environ.get('EVERYBODY_CAN_ADD_TO_PROBLEMSET', 'False')))
 
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
 #    'oioioi.contestlogo.processors.logo_processor',
@@ -333,10 +331,10 @@ AUTHENTICATION_BACKENDS += (
 )
 
 # Number of concurrently evaluated submissions (default is 1).
-#EVALMGR_CONCURRENCY = 30
+EVALMGR_CONCURRENCY = int(os.environ.get('EVALMGR_CONCURRENCY', 1))
 
 # Number of concurrently processed problem packages (default is 1).
-#UNPACKMGR_CONCURRENCY = 1
+UNPACKMGR_CONCURRENCY = int(os.environ.get('UNPACKMGR_CONCURRENCY', 1))
 
 PROBLEM_SOURCES += (
 #    'oioioi.sharingcli.problem_sources.RemoteSource',
