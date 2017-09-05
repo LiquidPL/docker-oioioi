@@ -18,4 +18,6 @@ COPY settings.py /sio2/deployment/settings.py
 COPY wait-for-it.sh /sio2
 COPY run.sh /sio2
 
+EXPOSE 7888 7889 7890 9000 9999
+
 CMD ["bash", "run.sh"]
