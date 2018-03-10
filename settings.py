@@ -36,7 +36,7 @@ SITE_ID = 1
 PUBLIC_ROOT_URL = os.environ.get('PUBLIC_ROOT_URL', 'https://example.com')
 
 # Email addresses to send error message reports.
-ADMINS = [tuple(x.split('|')) for x in os.environ.get('ADMINS', 'youremail@example.com').split(';')]
+ADMINS = [tuple(el.split('|')) for el in os.environ.get('ADMINS', 'Your Name|youremail@example.com').split(';')]
 
 # Sender email address for messages sent by OIOIOI to users.
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'webmaster@example.com')
