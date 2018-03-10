@@ -2,7 +2,6 @@ FROM debian:stretch
 ENV PYTHONUNBUFFERED 1
 
 RUN useradd -m oioioi
-COPY oioioi /sio2/oioioi
 
 COPY sudo.sh /tmp
 RUN /tmp/sudo.sh
