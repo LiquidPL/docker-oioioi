@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # "oioioi/default_settings.py".
 # Before you adjust it, you may consider visiting
 # "https://github.com/sio2project/oioioi/#changes-in-the-deployment-directory".
-CONFIG_VERSION = 18
+CONFIG_VERSION = 22
 
 # Enable debugging features.
 #
