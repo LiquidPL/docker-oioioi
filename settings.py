@@ -15,6 +15,16 @@ CONFIG_VERSION = 18
 # SET DEBUG = False FOR PRODUCTION DEPLOYMENT.
 DEBUG = bool(strtobool(os.environ.get('DEBUG', 'False')))
 
+if DEBUG:
+    TEMPLATES[0]['OPTIONS']['loaders'] = UNCACHED_TEMPLATE_LOADERS
+else:
+    # Cache compiled templates in production environment.
+    TEMPLATES[0]['OPTIONS']['loaders'] = CACHED_TEMPLATE_LOADERS
+
+# The APP_DIRS option is allowed only in template engines that have no custom
+# loaders specified.
+TEMPLATES[0]['APP_DIRS'] = False
+
 # Site name displayed in the title and used by sioworkersd
 # to distinguish OIOIOI instances.
 SITE_NAME = os.environ.get('SITE_NAME', 'OIOIOI')
@@ -116,8 +126,9 @@ BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@localhost:5672//')
 # the given port will be able to see all the files. It's recommended to have
 # the judging machines on a separate physical network and listen only on the
 # corresponding IP address.
-FILETRACKER_SERVER_ENABLED = bool(strtobool(os.environ.get('FILETRACKER_SERVER_ENABLED', 'False')))
 FILETRACKER_LISTEN_ADDR = os.environ.get('FILETRACKER_LISTEN_ADDR', '127.0.0.1')
+
+# Uncomment and change this to run filetracker on non-default port.
 FILETRACKER_LISTEN_PORT = int(os.environ.get('FILETRACKER_LISTEN_PORT', 9999))
 
 # When using a remote_storage_factory it's necessary to specify a cache
@@ -293,13 +304,20 @@ INSTALLED_APPS = (
 #    'oioioi.testspackages',
 #    'oioioi.pa',
 #    'oioioi.notifications',
-    'oioioi.prizes',
+#    'oioioi.prizes',
 #    'oioioi.mailsubmit',
 #    'oioioi.portals',
 #    'oioioi.globalmessage',
 #    'oioioi.newsfeed',
-    'oioioi.workers',
+#    'oioioi.workers',
 ) + INSTALLED_APPS
+
+# Additional Celery configuration necessary for 'prizes' app.
+if 'oioioi.prizes' in INSTALLED_APPS:
+    CELERY_IMPORTS.append('oioioi.prizes.models')
+    CELERY_ROUTES.update({
+        'oioioi.prizes.models.prizesmgr_job': dict(queue='prizesmgr'),
+})
 
 # Set to True to show the link to the problemset with contests on navbar.
 PROBLEMSET_LINK_VISIBLE = bool(strtobool(os.environ.get('PROBLEMSET_LINK_VISIBLE', 'True')))
