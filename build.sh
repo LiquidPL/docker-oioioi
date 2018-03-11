@@ -20,7 +20,7 @@ virtualenv -p python2 venv
 
 cd oioioi
 pip install -r requirements.txt
-pip install psycopg2-binary uwsgi librabbitmq typing
+pip install psycopg2-binary uwsgi librabbitmq typing bs4
 
 # purge pip cache
 rm -rf ~/.cache
