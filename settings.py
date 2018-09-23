@@ -7,8 +7,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # This should match INSTALLATION_CONFIG_VERSION in
 # "oioioi/default_settings.py".
 # Before you adjust it, you may consider visiting
-# "https://github.com/sio2project/oioioi/#changes-in-the-deployment-directory".
-CONFIG_VERSION = 22
+# "https://github.com/sio2project/oioioi/blob/master/UPGRADING.rst#changes-in-the-deployment-directory".
+CONFIG_VERSION = 26
 
 # Enable debugging features.
 #
@@ -109,17 +109,6 @@ SEND_USER_ACTIVATION_EMAIL = bool(strtobool(os.environ.get('SEND_USER_ACTIVATION
 # but this is unreliable and not intended for production.
 BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@localhost:5672//')
 
-# Filetracker server settings.
-#
-# Determines which filetracker database use, availible options are:
-# - 'oioioi.filetracker.client.media_root_factory' (the default)
-#    Stores files on local filesystem under MEDIA_ROOT, optionally
-#    exposing them with a filetracker server (see section below).
-# - 'oioioi.filetracker.client.remote_storage_factory'
-#    Connects to a filetracker server at FILETRACKER_URL, uses a local
-#    cache with recently used files under CACHE_ROOT directory.
-#FILETRACKER_CLIENT_FACTORY = 'oioioi.filetracker.client.media_root_factory'
-
 # Uncomment the following lines to enable remote access to Filetracker. This is
 # needed if you install separate judging machines. Beware -- there is no
 # authorization mechanism in Filetracker. Everyone who can access the server on
@@ -131,9 +120,10 @@ FILETRACKER_LISTEN_ADDR = os.environ.get('FILETRACKER_LISTEN_ADDR', '127.0.0.1')
 # Uncomment and change this to run filetracker on non-default port.
 FILETRACKER_LISTEN_PORT = int(os.environ.get('FILETRACKER_LISTEN_PORT', 9999))
 
-# When using a remote_storage_factory it's necessary to specify a cache
-# directory in which a necessary files will be stored.
-#FILETRACKER_CACHE_ROOT = '/sio2/deployment/cache'
+# When using a remote_storage_factory (it's the default storage factory)
+# it's necessary to specify a cache directory
+# in which the necessary files will be stored.
+FILETRACKER_CACHE_ROOT = '/sio2/deployment/cache'
 
 # When using a remote storage it's recommended to enable a cache cleaner deamon
 # which will periodically scan cache directory and remove files what aren't
@@ -335,6 +325,7 @@ TEMPLATES[0]['OPTIONS']['context_processors'] += [
 #    'oioioi.notifications.processors.notification_processor',
 #    'oioioi.globalmessage.processors.global_message_processor',
 #    'oioioi.portals.processors.portal_processor',
+#    'oioioi.portals.processors.portals_main_page_link_visible',
 ]
 
 MIDDLEWARE_CLASSES += (
