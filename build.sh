@@ -22,7 +22,7 @@ virtualenv -p python2 venv
 pip install -e sioworkers
 pip install -e oioioi
 
-pip install psycopg2-binary uwsgi librabbitmq typing bs4
+pip install psycopg2-binary uwsgi librabbitmq
 
 # purge pip cache
 rm -rf ~/.cache
