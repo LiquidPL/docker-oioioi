@@ -8,7 +8,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # "oioioi/default_settings.py".
 # Before you adjust it, you may consider visiting
 # "https://github.com/sio2project/oioioi/blob/master/UPGRADING.rst#changes-in-the-deployment-directory".
-CONFIG_VERSION = 26
+CONFIG_VERSION = 38
 
 # Enable debugging features.
 #
@@ -172,6 +172,22 @@ SIOWORKERS_LISTEN_ADDR = os.environ.get('SIOWORKERS_LISTEN_ADDR', '127.0.0.1')
 # because you use instance started by another instance of OIOIOI)
 RUN_SIOWORKERSD = bool(strtobool(os.environ.get('RUN_SIOWORKERSD', 'True')))
 
+# This setting specifies which compilers are available in sioworkers.
+# By default that means ones defined here:
+# https://github.com/sio2project/sioworkers/blob/master/setup.py#L71
+#AVAILABLE_COMPILERS = {
+#        'C': ['gcc'],
+#        'C++': ['g++'],
+#        'Pascal': ['fpc'],
+#        'Java': ['java'],
+#        'Python': ['python']
+#}
+
+# This setting sets the default compilers used throughout the platform.
+# By uncommenting the below dict you can change all or any one of them.
+# DEFAULT_COMPILERS = {'C': 'c', 'C++': 'cpp', 'Pascal': 'pas', 'Java': 'java',
+#                     'Python': 'py'}
+
 # Contest mode - automatic activation of contests.
 #
 # Available choices are:
@@ -214,6 +230,13 @@ RUN_LOCAL_WORKERS = bool(strtobool(os.environ.get('RUN_LOCAL_WORKERS', 'True')))
 USE_UNSAFE_EXEC = bool(strtobool(os.environ.get('USE_UNSAFE_EXEC', 'True')))
 USE_LOCAL_COMPILERS = bool(strtobool(os.environ.get('USE_LOCAL_COMPILERS', 'True')))
 
+# Default safe execution tool
+# You can change the safe execution tool. Current options are:
+# - "vcpu" - (default) OITimeTool
+# - "sio2jail" - SIO2Jail
+# - "cpu" - ptrace (measures real time)
+DEFAULT_SAFE_EXECUTION_MODE = os.environ.get('DEFAULT_SAFE_EXECUTION_MODE', 'vcpu')
+
 # WARNING: setting this to False is experimental until we make sure that
 # checkers do work well in sandbox
 #
@@ -228,6 +251,14 @@ USE_LOCAL_COMPILERS = bool(strtobool(os.environ.get('USE_LOCAL_COMPILERS', 'True
 # Whet it equals False, the upload workflow uses sioworkers for programs'
 # execution (in a sandboxed environment, if USE_UNSAFE_EXEC is set to False).
 USE_SINOLPACK_MAKEFILES = False
+
+# When set to True untrusted users cannot upload sinol packages containing
+# problem statement in HTML format (they must use PDF).
+# Trusted users are users with superuser access or teachers (if oioioi.teachers
+# app is enabled). This option has no effect for packages uploaded
+# by management commands or if USE_SINOLPACK_MAKEFILES is enabled.
+# We suggest enabling it when using oioioi.usercontests app.
+SINOLPACK_RESTRICT_HTML = False
 
 # Scorers below are used for judging submissions without contests,
 # eg. submitting to problems from problemset.
@@ -299,7 +330,9 @@ INSTALLED_APPS = (
 #    'oioioi.portals',
 #    'oioioi.globalmessage',
 #    'oioioi.newsfeed',
-#    'oioioi.workers',
+#    'oioioi.problemsharing',
+#    'oioioi.usergroups',
+#    'oioioi.usercontests',
 ) + INSTALLED_APPS
 
 # Additional Celery configuration necessary for 'prizes' app.
@@ -315,6 +348,11 @@ PROBLEMSET_LINK_VISIBLE = bool(strtobool(os.environ.get('PROBLEMSET_LINK_VISIBLE
 # Comment out to show tags on the list of problems
 PROBLEM_TAGS_VISIBLE = bool(strtobool(os.environ.get('PROBLEM_TAGS_VISIBLE', 'False')))
 
+# Enables problem statistics at the cost of some per-submission performance hit.
+# Set to True if you want to see statistics in the Problemset and problem sites.
+# After enabling you should use ./manage.py recalculate_statistics
+PROBLEM_STATISTICS_AVAILABLE = bool(strtobool(os.environ.get('PROBLEM_STATISTICS_AVAILABLE', 'False')))
+
 # Set to True to allow every logged in user to add problems directly to Problemset
 EVERYBODY_CAN_ADD_TO_PROBLEMSET = bool(strtobool(os.environ.get('EVERYBODY_CAN_ADD_TO_PROBLEMSET', 'False')))
 
@@ -328,7 +366,7 @@ TEMPLATES[0]['OPTIONS']['context_processors'] += [
 #    'oioioi.portals.processors.portals_main_page_link_visible',
 ]
 
-MIDDLEWARE_CLASSES += (
+MIDDLEWARE += (
 #    'oioioi.ipdnsauth.middleware.IpDnsAuthMiddleware',
 #    'oioioi.contestexcl.middleware.ExclusiveContestsMiddleware',
 #    'oioioi.ipdnsauth.middleware.ForceDnsIpAuthMiddleware',
@@ -337,6 +375,7 @@ MIDDLEWARE_CLASSES += (
 AUTHENTICATION_BACKENDS += (
 #    'oioioi.teachers.auth.TeacherAuthBackend',
 #    'oioioi.ipdnsauth.backends.IpDnsBackend',
+#    'oioioi.usercontests.auth.UserContestAuthBackend',
 )
 
 # Number of concurrently evaluated submissions (default is 1).
@@ -392,6 +431,12 @@ if MEMCACHED_ENABLED:
 # URL connection string for RabbitMQ instance used by Notifications Server
 #NOTIFICATIONS_RABBITMQ_URL = 'amqp://localhost'
 
+# Extra arguments for pika ConnectionParameters, see
+# https://pika.readthedocs.io/en/stable/modules/parameters.html
+#NOTIFICATIONS_RABBITMQ_EXTRA_PARAMS = {
+#    'heartbeat': 8
+#}
+
 # Port that the Notifications Server listens on
 #NOTIFICATIONS_SERVER_PORT = 7887
 
@@ -415,3 +460,8 @@ RAVEN_CONFIG = {
 # OIOIOI instance.
 #OIOIOI_INSTANCE_PRIORITY_BONUS = 0
 #OIOIOI_INSTANCE_WEIGHT_BONUS = 0
+
+# If set to True, usercontests will become read-only: it will be impossible to
+# change, delete or submit to existing usercontests, as well as add new ones.
+# This operation is fully reversible.
+#ARCHIVE_USERCONTESTS = True
